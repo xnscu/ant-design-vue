@@ -1,4 +1,5 @@
 <template>
+  <TopAd :is-c-n="isZhCN" />
   <Header />
   <div v-if="headers.length" class="toc-affix" :style="y > 102 ? 'position:fixed; top: 16px;' : ''">
     <a-anchor style="width: 160px" :items="headers">
@@ -43,8 +44,6 @@
       </template>
       <a-col :xxxl="20" :xxl="20" :xl="19" :lg="18" :md="18" :sm="24" :xs="24">
         <section :class="mainContainerClass">
-          <WWAdsVue v-if="isZhCN" />
-          <TopAd v-else />
           <Demo v-if="isDemo" :page-data="pageData" :is-zh-c-n="isZhCN">
             <component :is="matchCom" />
           </Demo>
@@ -85,22 +84,6 @@
             </template>
           </a-float-button>
         </a-float-button-group>
-        <!-- <div class="fixed-widgets" :style="isZhCN ? { bottom: '175px' } : {}">
-          <a-dropdown placement="top">
-            <template #overlay>
-              <a-menu
-                :selected-keys="[themeMode.theme.value]"
-                @click="({ key }) => themeMode.changeTheme(key)"
-              >
-                <a-menu-item key="default">{{ $t('app.theme.switch.default') }}</a-menu-item>
-                <a-menu-item key="dark">{{ $t('app.theme.switch.dark') }}</a-menu-item>
-              </a-menu>
-            </template>
-            <a-avatar class="fixed-widgets-avatar" :size="44">
-              <template #icon><ThemeIcon /></template>
-            </a-avatar>
-          </a-dropdown>
-        </div> -->
         <PrevAndNext :menus="menus" :current-menu-index="currentMenuIndex" :is-zh-c-n="isZhCN" />
         <Footer />
       </a-col>

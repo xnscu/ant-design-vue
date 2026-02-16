@@ -102,6 +102,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | locale | 默认文案设置，目前包括排序、过滤、空数据文案 | object | filterConfirm: `确定` <br> filterReset: `重置` <br> emptyText: `暂无数据` |  |
 | pagination | 分页器，参考[配置项](#pagination)或 [pagination](/components/pagination-cn/)文档，设为 false 时不展示和进行分页 | object \| `false` |  |  |
 | rowClassName | 表格行的类名 | Function(record, index):string | - |  |
+| rowDrag | 启用行拖曳排序，可传入 `true` 或 `{ enabled: true, canDrag?: (record, index) => boolean }` | boolean \| RowDragConfig | false |  |
 | rowExpandable | 设置是否允许行展开 | (record) => boolean | - | 3.0 |
 | rowKey | 表格行 key 的取值，可以是字符串或一个函数 | string\|Function(record):string | 'key' |  |
 | rowSelection | 列表项是否可选择，[配置项](#rowselection) | object | null |  |
@@ -125,6 +126,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | expand | 点击展开图标时触发 | Function(expanded, record) |
 | expandedRowsChange | 展开的行变化时触发 | Function(expandedRows) |
 | resizeColumn | 拖动列时触发 | Function(width, column) |
+| rowDragEnd | 行拖曳结束时触发 | Function({ originalEvent, dragIndex, dropIndex, data }) |
 
 #### customRow 用法
 

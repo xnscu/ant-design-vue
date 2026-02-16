@@ -97,6 +97,7 @@ Specify `dataSource` of Table as an array of data.
 | locale | i18n text including filter, sort, empty text, etc | object | filterConfirm: 'Ok' <br /> filterReset: 'Reset' <br /> emptyText: 'No Data' |  |
 | pagination | Config of pagination. You can ref table pagination [config](#pagination) or full [`pagination`](/components/pagination/) document, hide it by setting it to `false` | object \| `false` |  |  |
 | rowClassName | Row's className | Function(record, index):string | - |  |
+| rowDrag | Enable row drag-and-drop reordering. Pass `true` or `{ enabled: true, canDrag?: (record, index) => boolean }` | boolean \| RowDragConfig | false |  |
 | rowExpandable | Enable row can be expandable | (record) => boolean | - |  |
 | rowKey | Row's unique key, could be a string or function that returns a string | string\|Function(record, index):string | `key` |  |
 | rowSelection | Row selection [config](#rowselection) | object | null |  |
@@ -120,6 +121,7 @@ Specify `dataSource` of Table as an array of data.
 | expand | Callback executed when the row expand icon is clicked | Function(expanded, record) |  |
 | expandedRowsChange | Callback executed when the expanded rows change | Function(expandedRows) |  |
 | resizeColumn | Triggered when the column is dragged | Function(width, column) |  |
+| rowDragEnd | Triggered when row drag-and-drop ends | Function({ originalEvent, dragIndex, dropIndex, data }) |  |
 
 #### customRow usage
 

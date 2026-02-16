@@ -30,6 +30,7 @@
     <Summary />
     <Responsive />
     <TemplateCom />
+    <DragRow />
   </demo-sort>
 </template>
 
@@ -65,6 +66,7 @@ import ResizableColumn from './resizable-column.vue';
 import Responsive from './responsive.vue';
 import filterSearchVue from './filter-search.vue';
 import filterInTreeVue from './filter-in-tree.vue';
+import DragRow from './drag-row.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -103,6 +105,7 @@ export default defineComponent({
     Sticky,
     ResizableColumn,
     Responsive,
+    DragRow,
   },
 });
 </script>

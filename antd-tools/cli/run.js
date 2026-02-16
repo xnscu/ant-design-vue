@@ -8,6 +8,7 @@ const gulp = require('gulp');
 const program = require('commander');
 
 program.option('-c --npm-tag <type>', 'add --npm-tag=xxx');
+program.option('--ignore-error', 'ignore TypeScript errors during compile');
 
 program.on('--help', () => {
   console.log('  Usage:'.to.bold.blue.color);

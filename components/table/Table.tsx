@@ -46,6 +46,8 @@ import { initDefaultProps } from '../_util/props-util';
 import { useProvideSlots, useProvideTableContext } from './context';
 import type { ContextSlots } from './context';
 import useColumns from './hooks/useColumns';
+import useRowDrag from './hooks/useRowDrag';
+import type { RowDragConfig, RowDragEvent } from './hooks/useRowDrag';
 import { convertChildrenToColumns } from './util';
 
 import {
@@ -111,6 +113,11 @@ export interface TableProps<RecordType = DefaultRecordType>
   onResizeColumn?: (w: number, col: ColumnType) => void;
   rowSelection?: TableRowSelection<RecordType>;
 
+  /** Enable row drag-and-drop reordering */
+  rowDrag?: boolean | RowDragConfig;
+  /** Callback fired after a row is dropped to a new position */
+  onRowDragEnd?: (event: RowDragEvent<RecordType>) => void;
+
   getPopupContainer?: GetPopupContainer;
   scroll?: RcTableProps<RecordType>['scroll'] & {
     scrollToFirstRowOnChange?: boolean;
@@ -173,6 +180,8 @@ export const tableProps = () => {
       >(),
     onResizeColumn: functionType<(w: number, col: ColumnType) => void>(),
     rowSelection: objectType<TableRowSelection>(),
+    rowDrag: someType<boolean | RowDragConfig>([Boolean, Object]),
+    onRowDragEnd: functionType<(event: RowDragEvent) => void>(),
     getPopupContainer: functionType<GetPopupContainer>(),
     scroll: objectType<
       RcTableProps['scroll'] & {
@@ -489,6 +498,20 @@ const InternalTable = defineComponent({
       getPopupContainer: computed(() => props.getPopupContainer),
     });
 
+    // ============================ Row Drag ============================
+    const { buildDragCustomRow } = useRowDrag(
+      computed(() => props.rowDrag),
+      pageData,
+      getRowKey,
+      prefixCls,
+      emit,
+    );
+
+    const mergedCustomRow = computed(() => {
+      if (!props.rowDrag) return props.customRow;
+      return buildDragCustomRow(props.customRow);
+    });
+
     const internalRowClassName = (record: any, index: number, indent: number) => {
       let mergedRowClassName;
       const { rowClassName } = props;
@@ -595,7 +618,7 @@ const InternalTable = defineComponent({
         attrs.class,
         hashId.value,
       );
-      const tableProps = omit(props, ['columns']);
+      const tableProps = omit(props, ['columns', 'rowDrag', 'onRowDragEnd']);
       return wrapSSR(
         <div class={wrapperClassNames} style={attrs.style as CSSProperties}>
           <Spin spinning={false} {...spinProps}>
@@ -620,6 +643,7 @@ const InternalTable = defineComponent({
               data={pageData.value}
               rowKey={getRowKey.value}
               rowClassName={internalRowClassName}
+              customRow={mergedCustomRow.value}
               // Internal
               internalHooks={INTERNAL_HOOKS}
               internalRefs={internalRefs}

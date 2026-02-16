@@ -13,6 +13,7 @@ import {
 
 export type { ColumnProps } from './Column';
 export type { ColumnsType, ColumnType, ColumnGroupType } from './interface';
+export type { RowDragConfig, RowDragEvent } from './hooks/useRowDrag';
 export type { TableProps, TablePaginationConfig };
 
 const TableSummaryRow = SummaryRow;

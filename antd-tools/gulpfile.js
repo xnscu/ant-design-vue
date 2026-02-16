@@ -202,26 +202,68 @@ function compile(modules) {
     );
   }
 
-  const tsResult = sourceStream.pipe(
-    ts(tsConfig, {
-      error(e) {
-        tsDefaultReporter.error(e);
-        error = 1;
-      },
-      finish: tsDefaultReporter.finish,
-    }),
-  );
+  const ignoreError = argv['ignore-error'];
+  if (ignoreError) {
+    tsConfig.noEmitOnError = false;
+  }
+
+  const reporter = ignoreError
+    ? {
+        error(e) {
+          tsDefaultReporter.error(e);
+          error = 1;
+        },
+        finish(results) {
+          // Only log, don't let gulp-typescript emit a stream error
+          const total =
+            results.syntaxErrors +
+            results.semanticErrors +
+            results.declarationErrors +
+            results.emitErrors;
+          if (total > 0) {
+            console.log(`TypeScript: ${total} errors (ignored with --ignore-error)`);
+          }
+        },
+      }
+    : {
+        error(e) {
+          tsDefaultReporter.error(e);
+          error = 1;
+        },
+        finish: tsDefaultReporter.finish,
+      };
+
+  const tsResult = sourceStream.pipe(ts(tsConfig, reporter));
 
   function check() {
-    if (error && !argv['ignore-error']) {
+    if (error && !ignoreError) {
       process.exit(1);
     }
   }
 
   tsResult.on('finish', check);
   tsResult.on('end', check);
-  const tsFilesStream = babelify(tsResult.js, modules);
-  const tsd = tsResult.dts.pipe(gulp.dest(modules === false ? esDir : libDir));
+
+  // Swallow stream errors when ignoring TS errors
+  const noop = () => {};
+  if (ignoreError) {
+    tsResult.on('error', noop);
+  }
+
+  const jsStream = tsResult.js;
+  const dtsStream = tsResult.dts;
+  if (ignoreError) {
+    jsStream.on('error', noop);
+    dtsStream.on('error', noop);
+  }
+
+  const tsFilesStream = babelify(jsStream, modules);
+  const tsd = dtsStream.pipe(gulp.dest(modules === false ? esDir : libDir));
+  if (ignoreError) {
+    tsFilesStream.on('error', noop);
+    tsd.on('error', noop);
+  }
+
   return merge2([tsFilesStream, tsd, assets, transformFileStream].filter(s => s));
 }
 
@@ -251,10 +293,10 @@ function tag() {
   execSync(`git config --global user.name ${process.env.GITHUB_USER_NAME}`);
   execSync(`git tag ${version}`);
   execSync(
-    `git push https://${process.env.GITHUB_TOKEN}@github.com/vueComponent/ant-design-vue.git ${version}:${version}`,
+    `git push https://${process.env.GITHUB_TOKEN}@github.com/xnscu/ant-design-vue.git ${version}:${version}`,
   );
   execSync(
-    `git push https://${process.env.GITHUB_TOKEN}@github.com/vueComponent/ant-design-vue.git master:master`,
+    `git push https://${process.env.GITHUB_TOKEN}@github.com/xnscu/ant-design-vue.git master:master`,
   );
   console.log('tagged');
 }

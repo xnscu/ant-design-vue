@@ -17,6 +17,7 @@ import genResizeStyle from './resize';
 import genSorterStyle from './sorter';
 import genStickyStyle from './sticky';
 import genSummaryStyle from './summary';
+import genDragStyle from './drag';
 import { clearFix, resetComponent } from '../../style';
 
 export interface ComponentToken {}
@@ -372,6 +373,7 @@ export default genComponentStyleHook('Table', token => {
     genEllipsisStyle(tableToken),
     genSizeStyle(tableToken),
     genResizeStyle(tableToken),
+    genDragStyle(tableToken),
     genRtlStyle(tableToken),
   ];
 });
